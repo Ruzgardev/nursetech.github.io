@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/storage.ts","./src/types.ts","./src/vite-env.d.ts","./src/components/results.tsx","./src/components/roomform.tsx","./src/components/roomtable.tsx","./src/solver/solve.ts"],"version":"5.9.3"}
