@@ -24,8 +24,6 @@ export function RoomTable({ rooms, serviceMode, onEdit, onDelete }: Props) {
         <thead>
           <tr>
             <th>Oda</th>
-            <th>Yatak</th>
-            <th>Hasta</th>
             {showSpecial && (
               <>
                 <th>Enfekte</th>
@@ -41,8 +39,6 @@ export function RoomTable({ rooms, serviceMode, onEdit, onDelete }: Props) {
           {rooms.map((room) => (
             <tr key={room.id}>
               <td style={{ fontWeight: 500 }}>{room.roomCode}</td>
-              <td>{room.beds}</td>
-              <td>{room.patients}</td>
               {showSpecial && (
                 <>
                   <td>

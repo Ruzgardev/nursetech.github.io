@@ -12,8 +12,6 @@ type Props = {
 export function RoomForm({ room, existingCodes, serviceMode, onSave, onCancel }: Props) {
   const isEdit = !!room
   const [roomCode, setRoomCode] = useState(room?.roomCode ?? '')
-  const [beds, setBeds] = useState<1 | 2 | 3>(room?.beds ?? 2)
-  const [patients, setPatients] = useState(room?.patients ?? room?.beds ?? 2)
   const [infected, setInfected] = useState(room?.infected ?? false)
   const [avoidInfected, setAvoidInfected] = useState(room?.avoidInfected ?? false)
   const [infusion24h, setInfusion24h] = useState(room?.infusion24h ?? 0)
@@ -35,29 +33,23 @@ export function RoomForm({ room, existingCodes, serviceMode, onSave, onCancel }:
       setError('Bu oda kodu zaten kullanılıyor')
       return
     }
-    if (patients > beds) {
-      setError('Hasta sayısı yatak sayısından fazla olamaz')
-      return
-    }
-    if (infusion24h > patients) {
-      setError('24h infüzyon hasta sayısından fazla olamaz')
+    if (infusion24h < 0) {
+      setError('24h infüzyon 0 veya pozitif olmalı')
       return
     }
     setError('')
     onSave({
       id: room?.id,
       roomCode: code,
-      beds,
-      patients,
+      beds: 1,
+      patients: 1,
       infected: serviceMode === 'infection_transplant' ? infected : false,
       avoidInfected: serviceMode === 'infection_transplant' && !infected ? avoidInfected : false,
-      infusion24h,
+      infusion24h: Math.max(0, infusion24h),
       infusionTotal: Math.min(20, Math.max(0, infusionTotal)),
     })
   }, [
     roomCode,
-    beds,
-    patients,
     infected,
     avoidInfected,
     infusion24h,
@@ -68,14 +60,6 @@ export function RoomForm({ room, existingCodes, serviceMode, onSave, onCancel }:
     serviceMode,
     onSave,
   ])
-
-  useEffect(() => {
-    if (patients > beds) setPatients(beds)
-  }, [beds])
-
-  useEffect(() => {
-    if (infusion24h > patients) setInfusion24h(patients)
-  }, [patients])
 
   const showSpecial = serviceMode === 'infection_transplant'
 
@@ -106,24 +90,6 @@ export function RoomForm({ room, existingCodes, serviceMode, onSave, onCancel }:
               autoFocus
             />
           </div>
-          <div className="form-group">
-            <label>Yatak (1–3)</label>
-            <select value={beds} onChange={(e) => setBeds(Number(e.target.value) as 1 | 2 | 3)}>
-              <option value={1}>1</option>
-              <option value={2}>2</option>
-              <option value={3}>3</option>
-            </select>
-          </div>
-          <div className="form-group">
-            <label>Hasta (0–{beds})</label>
-            <input
-              type="number"
-              min={0}
-              max={beds}
-              value={patients}
-              onChange={(e) => setPatients(Math.min(beds, Math.max(0, parseInt(e.target.value, 10) || 0)))}
-            />
-          </div>
           {showSpecial && (
             <>
               <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -148,14 +114,13 @@ export function RoomForm({ room, existingCodes, serviceMode, onSave, onCancel }:
             </>
           )}
           <div className="form-group">
-            <label>24h infüzyon (0–{patients})</label>
+            <label>24h infüzyon</label>
             <input
               type="number"
               min={0}
-              max={patients}
               value={infusion24h}
               onChange={(e) =>
-                setInfusion24h(Math.min(patients, Math.max(0, parseInt(e.target.value, 10) || 0)))
+                setInfusion24h(Math.max(0, parseInt(e.target.value, 10) || 0))
               }
             />
           </div>
