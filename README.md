@@ -27,4 +27,11 @@ Tarayıcıda `http://localhost:5173` adresini açın.
 
 ## Canlı Yayın
 
-Uygulama GitHub Pages ile yayınlanıyor: [https://ruzgardev.github.io/nursetech.github.io/](https://ruzgardev.github.io/nursetech.github.io/)
+Uygulama GitHub Pages ile yayınlanıyor. İlk kurulum için:
+
+1. Repo **Settings** → **Pages**
+2. **Source:** Deploy from a branch
+3. **Branch:** gh-pages | **Folder:** / (root)
+4. **Save**
+
+Site adresi: [https://ruzgardev.github.io/nursetech.github.io/](https://ruzgardev.github.io/nursetech.github.io/)
