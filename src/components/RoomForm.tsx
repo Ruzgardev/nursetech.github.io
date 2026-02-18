@@ -33,8 +33,8 @@ export function RoomForm({ room, existingCodes, serviceMode, onSave, onCancel }:
       setError('Bu oda kodu zaten kullanılıyor')
       return
     }
-    if (infusion24h < 0) {
-      setError('24h infüzyon 0 veya pozitif olmalı')
+    if (infusion24h < 0 || infusion24h > 20) {
+      setError('24h infüzyon 0–20 arasında olmalı')
       return
     }
     setError('')
@@ -45,7 +45,7 @@ export function RoomForm({ room, existingCodes, serviceMode, onSave, onCancel }:
       patients: 1,
       infected: serviceMode === 'infection_transplant' ? infected : false,
       avoidInfected: serviceMode === 'infection_transplant' && !infected ? avoidInfected : false,
-      infusion24h: Math.max(0, infusion24h),
+      infusion24h: Math.min(20, Math.max(0, infusion24h)),
       infusionTotal: Math.min(20, Math.max(0, infusionTotal)),
     })
   }, [
@@ -114,13 +114,14 @@ export function RoomForm({ room, existingCodes, serviceMode, onSave, onCancel }:
             </>
           )}
           <div className="form-group">
-            <label>24h infüzyon</label>
+            <label>24h infüzyon (0–20)</label>
             <input
               type="number"
               min={0}
+              max={20}
               value={infusion24h}
               onChange={(e) =>
-                setInfusion24h(Math.max(0, parseInt(e.target.value, 10) || 0))
+                setInfusion24h(Math.min(20, Math.max(0, parseInt(e.target.value, 10) || 0)))
               }
             />
           </div>
