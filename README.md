@@ -24,3 +24,7 @@ Tarayıcıda `http://localhost:5173` adresini açın.
 - `npm run dev` — Geliştirme sunucusu
 - `npm run build` — Production build
 - `npm run preview` — Build önizlemesi
+
+## Canlı Yayın
+
+Uygulama GitHub Pages ile yayınlanıyor: [https://ruzgardev.github.io/nursetech.github.io/](https://ruzgardev.github.io/nursetech.github.io/)
