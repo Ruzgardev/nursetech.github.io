@@ -196,7 +196,7 @@ export function solve(rooms: Room[], nurseCount: number, infectedNurseLimit: 1 |
         }
         nurseRoomIds[n] = temp[n]
       }
-      nurseRoomIds.fill([])
+      for (let i = 0; i < nurseCount; i++) nurseRoomIds[i] = []
       nurseRoomIds[bestStart] = sortedInfected.map((r) => r.id)
     }
   }
@@ -260,11 +260,10 @@ export function solve(rooms: Room[], nurseCount: number, infectedNurseLimit: 1 |
 
   for (let iter = 0; iter < MAX_IMPROVE_ITERATIONS; iter++) {
     let improved = false
-    for (let n1 = 0; n1 < nurseCount; n1++) {
-      for (let n2 = 0; n2 < nurseCount; n2++) {
-        if (n1 === n2) continue
-        const rooms1 = nurseRoomIds[n1]
-        const rooms2 = nurseRoomIds[n2]
+    outer: for (let n1 = 0; n1 < nurseCount; n1++) {
+      for (let n2 = n1 + 1; n2 < nurseCount; n2++) {
+        const rooms1 = [...nurseRoomIds[n1]]
+        const rooms2 = [...nurseRoomIds[n2]]
         for (const id1 of rooms1) {
           const r1 = roomMap.get(id1)!
           for (const id2 of rooms2) {
@@ -280,8 +279,11 @@ export function solve(rooms: Room[], nurseCount: number, infectedNurseLimit: 1 |
             })
             const scoreBefore = computeImbalanceScore(beforeA)
 
-            nurseRoomIds[n1] = rooms1.filter((x) => x !== id1).concat([id2])
-            nurseRoomIds[n2] = rooms2.filter((x) => x !== id2).concat([id1])
+            const newRooms1 = rooms1.filter((x) => x !== id1).concat([id2])
+            const newRooms2 = rooms2.filter((x) => x !== id2).concat([id1])
+
+            nurseRoomIds[n1] = newRooms1
+            nurseRoomIds[n2] = newRooms2
 
             const afterA = nurseRoomIds.map((ids, i) => {
               const t = computeTotals(ids, roomMap) as NurseAssignment
@@ -305,6 +307,7 @@ export function solve(rooms: Room[], nurseCount: number, infectedNurseLimit: 1 |
             const scoreAfter = computeImbalanceScore(afterA)
             if (scoreAfter < scoreBefore) {
               improved = true
+              break outer
             } else {
               nurseRoomIds[n1] = rooms1
               nurseRoomIds[n2] = rooms2
